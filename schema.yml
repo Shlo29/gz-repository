@@ -1,0 +1,34 @@
+version: 2
+
+models:
+
+    - name: sales
+      description: Aggregation of gz_raw_data.raw_gz_product&sales tables
+      tests:
+        - unique:
+            column_name: "(orders_id || '-' || products_id)"
+            
+      columns:
+          - name: orders_id
+            description: PK - identifier of the orders
+            tests : 
+            - not_null 
+
+          - name: products_id
+            description: FK - to link the two tables gz_raw_data.raw_gz_product&sales tables to create a unique primary key
+            tests:
+            - not_null
+
+          - name: qty
+
+          - name: turnover
+            description: Average sales price times the number of units sold
+            tests:
+            - not_null
+          
+          - name: purchase_cost
+            description: Costs associated with the acquisition of goods and services from external sources
+            tests:
+            - not_null
+          - name: margin
+            description: turnover minus puchase cost

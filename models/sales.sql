@@ -1,10 +1,9 @@
 {{ config(schema='transaction') }}
 
 WITH 
+   sales AS (SELECT * FROM {{ ref('stg_sales') }} )
 
-  sales AS (SELECT * FROM `gz_raw_data.raw_gz_sales`)
-
-  ,product AS (SELECT * FROM `gz_raw_data.raw_gz_product`)
+  ,product AS (SELECT * FROM {{ ref('stg_product')}})
 
 SELECT
   s.date_date
@@ -17,10 +16,10 @@ SELECT
   -- revenue --
   ,s.revenue AS turnover
   -- cost --
-  ,CAST(p.purchSE_PRICE AS FLOAT64) AS purchase_price
-	,ROUND(s.quantity*CAST(p.purchSE_PRICE AS FLOAT64),2) AS purchase_cost
+
+	,ROUND(s.quantity*purchase_price,2) AS purchase_cost
 	-- margin --
-	,{{ margin('s.revenue', 's.quantity*CAST(p.purchSE_PRICE AS FLOAT64)') }} AS margin
-    ,{{ margin_percent('s.revenue', 's.quantity*CAST(p.purchSE_PRICE AS FLOAT64)') }} AS margin_percent
+	,ROUND({{ margin('s.revenue', 'p.purchase_price') }}) AS margin
+    ,{{ margin_percent('s.revenue', 'p.purchase_price') }} AS margin_percent
 FROM sales s
 INNER JOIN product p ON s.pdt_id = p.products_id

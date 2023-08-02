@@ -1,8 +1,7 @@
 {{ config(schema='transaction') }}
 
 WITH 
-
-  sales AS (SELECT * FROM `gz_raw_data.raw_gz_sales`)
+   sales AS (SELECT * FROM {{ ref('stg_sales') }} )
 
   ,product AS (SELECT * FROM `gz_raw_data.raw_gz_product`)
 
